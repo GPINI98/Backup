@@ -4,6 +4,7 @@ from datetime import datetime
 scelta = 0
 
 cartella_sorgente = None
+ultimo_backup = None
 
 while scelta != 4:
      
@@ -13,8 +14,6 @@ while scelta != 4:
     print("4. Esci")
 
     scelta = int(input("Fai la tua scelta: "))
-    # cartella_sorgente = None
-    # cartella_destinazione = None
 
     if scelta == 1:
         print("seleziona cartella sorgente")
@@ -26,7 +25,7 @@ while scelta != 4:
         else:
             cartella_sorgente = None
             print("Percorso non valido")
-    if scelta == 2:
+    elif scelta == 2:
         if cartella_sorgente is None:
             print("Devi prima selezionare una cartella sorgente")
             continue # interrompe l'iterazione e riporta il programma all'inizio
@@ -37,10 +36,17 @@ while scelta != 4:
 
         for elemento in cartella_sorgente.iterdir():
             if elemento.is_file():
-                shutil.copy2(cartella_sorgente/elemento.name, cartella_destinazione/elemento.name)
+                shutil.copy2(elemento, cartella_destinazione/elemento.name)
             elif elemento.is_dir():
-                shutil.copytree(cartella_sorgente/elemento.name, cartella_destinazione/elemento.name)
+                shutil.copytree(elemento, cartella_destinazione/elemento.name, dirs_exist_ok=True)
 
+        ultimo_backup = ora_backup = datetime.now()
+        data_formattata = ora_backup.strftime("%d/%m/%Y alle %H:%M:%S")
+        print(f"Backup completato il {data_formattata}")
         
-    if scelta == 3:
-        print("visualizza info ultimo backup")
+    elif scelta == 3:
+        if ultimo_backup is None:
+            print("Nessun backup è stato ancora effettuato")
+        else:
+            data_formattata = ultimo_backup.strftime("%d/%m/%Y alle %H:%M:%S")
+            print(f"Ultimo backup effettuato il {data_formattata}")
